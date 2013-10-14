@@ -1,6 +1,6 @@
 /**
  * DataFormatter - v1.0
- * http://github.com/Fakundo/DataFormatter
+ * https://github.com/Fakundo/Excel-Style-Javascript-DataFormatter
  * Copyright (C) 2013 Roman Samoylov
  */
 DataFormatter = {
