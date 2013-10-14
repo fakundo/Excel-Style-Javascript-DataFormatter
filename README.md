@@ -13,8 +13,8 @@ Usage:
 ```js
 DataFormatter.format("12.34","Number","0.0") //12.3
 DataFormatter.format("99.99","Number","Currency") //99,99р.
-DataFormatter.format("-18000","Number","2,356E+1") //2,356E+1
-DataFormatter.format("0.0000034","Number","0.00E+0") //-1,80E+4
+DataFormatter.format("-18000","Number","0.00E+0") //-1,80E+4
+DataFormatter.format("0.0000034","Number","0.00E+0") //3,40E-6
 DataFormatter.format("0.453","Number","0.0%") //45,3%
 DataFormatter.format("9322","Number","### .##") //9,32
 DataFormatter.format("123000","Number","0,0-0") //123 00-0
