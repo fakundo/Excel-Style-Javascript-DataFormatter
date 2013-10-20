@@ -494,6 +494,8 @@ DataFormatter = {
 
 		}
 
+		code += 'return {value:n}\n';
+
 		return  (DataFormatter.functions[pattern] = Function('n,type', code))(n, type);
 	},
 
