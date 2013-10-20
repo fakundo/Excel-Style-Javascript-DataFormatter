@@ -404,10 +404,11 @@ DataFormatter = {
 					if (factor != 1) digit_fun = 'n/=' + factor + ';\n' + digit_fun;
 
 				}
-
 				digit_fun = 'if(isNaN(n) || n>=1e21||n<=-1e21){\nres.value=n;\n}\nelse{\n' + digit_fun + '}\n';
 
-				code_tmp += !condition ? 'if(type=="Number"){\n' + digit_fun + '}\n' : digit_fun;
+				if (!condition) condition = 'type=="Number"';
+
+				code_tmp += digit_fun;
 			}
 
 			//format as datetime
@@ -494,7 +495,7 @@ DataFormatter = {
 
 		}
 
-		code += 'return {value:n}\n';
+		code += 'return {value:n};\n';
 
 		return  (DataFormatter.functions[pattern] = Function('n,type', code))(n, type);
 	},
