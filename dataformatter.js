@@ -216,20 +216,28 @@ DataFormatter = {
 
 			code += 'var res = {value:n};\n' +
 				'if (type == "Number"){\n' +
-				'if (!isNaN(n) && n<1e21 && n>-1e21){\n' +
+				'if (!isNaN(n) && n!=""){\n' +
+				'if (n<1e21 && n>-1e21){\n' +
 				'res.align="right";\n' +
 				'n=parseFloat(n);\n' +
 				'res.value=n;\n' +
 				'if (n != parseInt(n / 1)) {\n' +
-				'res.value = (Math.round(n*100)/100).toString().replace(/\\./,"' + DataFormatter.locale.decimal_separator + '");' +
+				'res.value = (Math.round(n*100)/100).toString().replace(/\\./,"' + DataFormatter.locale.decimal_separator + '");\n' +
+				'}\n' + //n != parseInt(n / 1)
 				'}\n' +
-				'}\n' +
-				'}\n' +
+				'else ' +
+				'{\n' +
+				'res.value=n.toString().toUpperCase();\n' +
+				'}\n' + //n<1e21 && n>-1e21
+				'}\n' + //!isNaN(n) && n!=""
+				'}\n' + //type == "Number"
 				'else if(type == "DateTime" && !isNaN((new Date(n)).getTime())){\n' +
 				'res.align="right";\n' +
-				'res.value = Math.abs((new Date(n)).getTime()-(new Date("1899-12-31T00:00:00.000")).getTime())/1000/60/60/24;' +
+				'res.value = Math.abs((new Date(n)).getTime()-(new Date("1899-12-31T00:00:00.000")).getTime())/1000/60/60/24;\n' +
 				'}\n' +
 				'return res;';
+
+			console.log(code);
 
 		} else {
 
@@ -433,7 +441,7 @@ DataFormatter = {
 						if (factor != 1) digit_fun = 'n/=' + factor + ';\n' + digit_fun;
 
 					}
-					digit_fun = 'if(n<1e21 && n>-1e21){\n' + digit_fun + '}\n';
+					digit_fun = 'if(n<1e21 && n>-1e21){\n' + digit_fun + '}\nelse{\nres.value=n.toString().toUpperCase();\n}\n';
 
 					if (!condition) condition = 'type=="Number"';
 
