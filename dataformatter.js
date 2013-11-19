@@ -237,8 +237,6 @@ DataFormatter = {
 				'}\n' +
 				'return res;';
 
-			console.log(code);
-
 		} else {
 
 			sectors = pattern;
