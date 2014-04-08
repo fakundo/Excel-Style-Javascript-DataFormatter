@@ -110,7 +110,7 @@ window.DataFormatter = {
                 digit_fun += "DataFormatter.fillNumberPattern(parseInt(n[1]),'" + ptrn[3] + "','right')+";
               }
             }
-            digit_fun += '"E"+(m>0?"-":"+")+DataFormatter.fillNumberPattern(Math.abs(m),"' + ptrn[4] + '");\n';
+            digit_fun += "'E'+(m>0?'-':'+')+DataFormatter.fillNumberPattern(Math.abs(m),'" + ptrn[4] + "');\n";
           } else {
             factor = 1;
             sectors[i] = sectors[i].replace(/(0|#|\?)(\s+)([^0?#]*)$/, function(a, m1, m2, m3) {
@@ -201,6 +201,7 @@ window.DataFormatter = {
   },
   fillNumberPattern: function(n, pattern, direction) {
     var i, j, most_left_digit, s, separate_thousands, _i, _j, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+    console.log(n, pattern);
     n = n.toString();
     s = '';
     if (direction === 'right') {
@@ -276,6 +277,7 @@ window.DataFormatter = {
         s = s.substr(0, most_left_digit) + n.substr(0, j + 1) + s.substr(most_left_digit);
       }
     }
+    console.log(s);
     return s;
   },
   makeReplaces: function(s, repl) {

@@ -53,6 +53,8 @@ DataFormatter = {
 	 */
 	fillNumberPattern: function (n, ptrn, dir) {
 
+		console.log(n,ptrn)
+
 		n = n.toString();
 
 		var s = '', i, j;
@@ -166,7 +168,7 @@ DataFormatter = {
 				s = s.substr(0, most_left_digit) + n.substr(0, j + 1) + s.substr(most_left_digit);
 			}
 		}
-
+		console.log(s)
 		return s;
 	},
 

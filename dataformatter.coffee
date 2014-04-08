@@ -146,7 +146,7 @@ window.DataFormatter =
             if ptrn[2]
               digit_fun += "'#{DataFormatter.locale.decimal_separator}'+"
               if ptrn[3] then digit_fun += "DataFormatter.fillNumberPattern(parseInt(n[1]),'#{ptrn[3]}','right')+"
-            digit_fun += '"E"+(m>0?"-":"+")+DataFormatter.fillNumberPattern(Math.abs(m),"' + ptrn[4] + '");\n'
+            digit_fun += "'E'+(m>0?'-':'+')+DataFormatter.fillNumberPattern(Math.abs(m),'#{ptrn[4]}');\n"
           else
             factor = 1
             # Spaces before end
@@ -278,6 +278,7 @@ window.DataFormatter =
 
 # Fills pattern
   fillNumberPattern: (n, pattern, direction)->
+    console.log(n,pattern)
     n = n.toString()
     s = ''
     if direction == 'right'
@@ -338,6 +339,7 @@ window.DataFormatter =
       # Add remaining digits, example: n=1234, ptrn=00, result must be 1234 instead of 34
       if j >= 0 && most_left_digit != null
         s = s.substr(0, most_left_digit) + n.substr(0, j + 1) + s.substr(most_left_digit)
+    console.log(s)
     s
 
 # Replaces all [] in string
