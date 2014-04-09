@@ -91,7 +91,7 @@ window.DataFormatter =
         condition = sectors[i].match(/\[((?:>|>=|<|<=|=|<>)[0-9\.]+?)]/)
         if condition
           # Found condition
-          condition = 'type=="Number" && n' + condition[1].replace(/<>/, '!=').replace(/[=]/, '==')
+          condition = 'type=="Number" && n' + condition[1].replace(/<>/, '!=').replace('/=/', '==')
         else if i == 0 && sectors.length > 2
           # Standard condition for positive number
           condition = 'type=="Number" && n>0'
@@ -274,6 +274,7 @@ window.DataFormatter =
         # if condition exists, add "if" operator
         code += if condition then "if(#{condition}){\n #{code_tmp} }\n\n" else code_tmp
       code += 'return {value:n};\n'
+    console.log(code)
     (DataFormatter.functions[pattern] = Function('n,type', code))(n, type)
 
 # Fills pattern

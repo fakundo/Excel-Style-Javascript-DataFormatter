@@ -64,7 +64,7 @@ window.DataFormatter = {
         abs = false;
         condition = sectors[i].match(/\[((?:>|>=|<|<=|=|<>)[0-9\.]+?)]/);
         if (condition) {
-          condition = 'type=="Number" && n' + condition[1].replace(/<>/, '!=').replace(/[=]/, '==');
+          condition = 'type=="Number" && n' + condition[1].replace(/<>/, '!=').replace('/=/', '==');
         } else if (i === 0 && sectors.length > 2) {
           condition = 'type=="Number" && n>0';
         } else if (i === 0 && sectors.length > 1) {
@@ -197,6 +197,7 @@ window.DataFormatter = {
       }
       code += 'return {value:n};\n';
     }
+    console.log(code);
     return (DataFormatter.functions[pattern] = Function('n,type', code))(n, type);
   },
   fillNumberPattern: function(n, pattern, direction) {
