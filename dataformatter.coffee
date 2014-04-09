@@ -274,7 +274,6 @@ window.DataFormatter =
         # if condition exists, add "if" operator
         code += if condition then "if(#{condition}){\n #{code_tmp} }\n\n" else code_tmp
       code += 'return {value:n};\n'
-    console.log(code)
     (DataFormatter.functions[pattern] = Function('n,type', code))(n, type)
 
 # Fills pattern
