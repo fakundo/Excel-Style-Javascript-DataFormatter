@@ -200,8 +200,7 @@ window.DataFormatter = {
     return (DataFormatter.functions[pattern] = Function('n,type', code))(n, type);
   },
   fillNumberPattern: function(n, pattern, direction) {
-    var i, j, most_left_digit, s, separate_thousands, _i, _j, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
-    console.log(n, pattern);
+    var i, j, most_left_digit, s, separate_thousands, _i, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
     n = n.toString();
     s = '';
     if (direction === 'right') {
@@ -245,20 +244,21 @@ window.DataFormatter = {
         }
       }
       j = n.length - 1;
-      for (i = _j = _ref4 = pattern.length - 1; _ref4 <= 0 ? _j <= 0 : _j >= 0; i = _ref4 <= 0 ? ++_j : --_j) {
+      i = pattern.length;
+      while (i--) {
         switch (pattern[i]) {
           case '0':
-            s = ((_ref5 = n[j]) != null ? _ref5 : '0') + s;
+            s = ((_ref4 = n[j]) != null ? _ref4 : '0') + s;
             most_left_digit = i;
             j--;
             break;
           case '#':
-            s = ((_ref6 = n[j]) != null ? _ref6 : '') + s;
+            s = ((_ref5 = n[j]) != null ? _ref5 : '') + s;
             most_left_digit = i;
             j--;
             break;
           case '?':
-            s = ((_ref7 = n[j]) != null ? _ref7 : ' ') + s;
+            s = ((_ref6 = n[j]) != null ? _ref6 : ' ') + s;
             most_left_digit = i;
             j--;
             break;
@@ -277,7 +277,6 @@ window.DataFormatter = {
         s = s.substr(0, most_left_digit) + n.substr(0, j + 1) + s.substr(most_left_digit);
       }
     }
-    console.log(s);
     return s;
   },
   makeReplaces: function(s, repl) {

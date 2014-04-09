@@ -278,7 +278,6 @@ window.DataFormatter =
 
 # Fills pattern
   fillNumberPattern: (n, pattern, direction)->
-    console.log(n,pattern)
     n = n.toString()
     s = ''
     if direction == 'right'
@@ -315,7 +314,8 @@ window.DataFormatter =
           n = n.substr(0, j) + DataFormatter.locale.thousands_separator + n.substr(j)
           j -= 3
       j = n.length - 1
-      for i in [pattern.length - 1..0]
+      i = pattern.length
+      while i--
         switch pattern[i]
           when '0'
             s = (n[j] ? '0') + s
@@ -339,7 +339,6 @@ window.DataFormatter =
       # Add remaining digits, example: n=1234, ptrn=00, result must be 1234 instead of 34
       if j >= 0 && most_left_digit != null
         s = s.substr(0, most_left_digit) + n.substr(0, j + 1) + s.substr(most_left_digit)
-    console.log(s)
     s
 
 # Replaces all [] in string
