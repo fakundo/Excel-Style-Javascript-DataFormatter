@@ -196,7 +196,6 @@ window.DataFormatter = {
       code += condition ? "if(" + condition + "){\n  " + code_tmp + "\n}" : code_tmp;
     }
     code += "return {value:n};";
-    console.log(code);
     return (DataFormatter.functions[pattern] = Function('n,type', code))(n, type);
   },
   fillNumberPattern: function(n, pattern, direction) {

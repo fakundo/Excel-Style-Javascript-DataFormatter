@@ -326,7 +326,6 @@ window.DataFormatter = # Saved functions for each pattern
     code += """
     return {value:n};
     """
-    console.log(code)
     (DataFormatter.functions[pattern] = Function('n,type', code))(n, type)
 
 # Fills pattern
