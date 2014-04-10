@@ -28,7 +28,7 @@ window.DataFormatter = {
     }
   },
   format: function(n, type, pattern) {
-    var abs, code, code_tmp, condition, d, digit_fun, elapsed, factor, frac_part, i, int_part, ptrn, repl, repl_$, sectors, _i, _ref;
+    var abs, code, code_tmp, condition, d, digit_fun, elapsed, factor, frac_part, i, int_part, ptrn, repl, repl_$, sectors, t_l;
     pattern = pattern.toString();
     if (DataFormatter.functions[pattern]) {
       return DataFormatter.functions[pattern](n, type);
@@ -36,56 +36,59 @@ window.DataFormatter = {
     code = '';
     repl = '';
     repl_$ = '';
-    if (pattern === 'General') {
-      code += 'var res = {value:n};\n' + 'if (type == "Number"){\n' + 'if (!isNaN(n) && n!=""){\n' + 'if (n<1e21 && n>-1e21){\n' + 'res.align="right";\n' + 'n=parseFloat(n);\n' + 'res.value=n;\n' + 'if (n != parseInt(n / 1)) {\n' + ("res.value = (Math.round(n*100)/100).toString().replace(/\\./,'" + DataFormatter.locale.decimal_separator + "');\n") + '}\n' + '}\n' + 'else ' + '{\n' + 'res.value=n.toString().toUpperCase();\n' + '}\n' + '}\n' + '}\n' + 'else if(type == "DateTime" && !isNaN((new Date(n)).getTime())){\n' + 'res.align="right";\n' + 'res.value = Math.abs((new Date(n)).getTime()-(new Date("1899-12-31T00:00:00.000")).getTime())/1000/60/60/24;\n' + '}\n' + 'return res;';
-    } else {
-      sectors = pattern;
-      if (DataFormatter.locale.formats[sectors]) {
-        sectors = DataFormatter.locale.formats[sectors];
+    sectors = pattern;
+    if (DataFormatter.locale.formats[sectors]) {
+      sectors = DataFormatter.locale.formats[sectors];
+    }
+    sectors = sectors.replace(/"([^"]+)"|\\(.?)|(_.?)|(\*.?)|(")/g, function(a, m1, m2, m3) {
+      if (m1) {
+        repl += ",\"" + (m1.replace(/("|'|\\)/g, "\\$1")) + "\"";
+        return "[" + (repl_$ += '$') + "]";
       }
-      sectors = sectors.replace(/"([^"]+)"|\\(.?)|(_.?)|(\*.?)|(")/g, function(a, m1, m2, m3) {
-        if (m1) {
-          repl += ',"' + m1.replace(/("|'|\\)/g, "\\$1") + '"';
-          return '[' + (repl_$ += '$') + ']';
-        }
-        if (m2) {
-          repl += ',"' + m2.replace(/("|'|\\)/g, "\\$1") + '"';
-          return '[' + (repl_$ += '$') + ']';
-        }
-        if (m3) {
-          repl += '," "';
-          return '[' + (repl_$ += '$') + ']';
-        }
-        return '';
-      });
-      sectors = sectors.split(/;/);
-      for (i = _i = 0, _ref = Math.min(4, sectors.length) - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-        condition = '';
-        abs = false;
-        condition = sectors[i].match(/\[((?:>|>=|<|<=|=|<>)[0-9\.]+?)]/);
-        if (condition) {
-          condition = 'type=="Number" && n' + condition[1].replace(/<>/, '!=').replace('/=/', '==');
-        } else if (i === 0 && sectors.length > 2) {
-          condition = 'type=="Number" && n>0';
-        } else if (i === 0 && sectors.length > 1) {
-          condition = 'type=="Number" && n>=0';
-        } else if (i === 1 && sectors.length > 1) {
-          condition = 'type=="Number" && n<0';
-          abs = true;
-        } else if (i === 2 && sectors.length > 3) {
-          condition = 'type=="Number"';
-        }
-        code_tmp = 'var res={value:"' + sectors[i] + '"}, repl=[' + repl + '];\n';
-        if (ptrn = sectors[i].match(/\[(Red|Green|White|Blue|Magenta|Yellow|Cyan|Black)]/i)) {
-          code_tmp += 'res.color="' + ptrn[1] + '";\n';
-        }
-        sectors[i] = sectors[i].replace(/(\[((?!((\$*?)|(h*?)|(m*?)|(s*?))]).*?)])/, '');
+      if (m2) {
+        repl += ",\"" + (m2.replace(/("|'|\\)/g, "\\$1")) + "\"";
+        return "[" + (repl_$ += '$') + "]";
+      }
+      if (m3) {
+        repl += '," "';
+        return "[" + (repl_$ += '$') + "]";
+      }
+      return '';
+    });
+    code = "var repl = [" + repl + "];";
+    sectors = sectors.split(/;/);
+    i = -1;
+    t_l = Math.min(4, sectors.length);
+    while (++i < t_l) {
+      condition = '';
+      abs = false;
+      condition = sectors[i].match(/\[((?:>|>=|<|<=|=|<>)[0-9\.]+?)]/);
+      if (condition) {
+        condition = "type=='Number' && n " + (condition[1].replace(/<>/, '!=').replace('/=/', '=='));
+      } else if (i === 0 && sectors.length > 2) {
+        condition = 'type=="Number" && n>0';
+      } else if (i === 0 && sectors.length > 1) {
+        condition = 'type=="Number" && n>=0';
+      } else if (i === 1 && sectors.length > 2) {
+        condition = 'type=="Number" && n<0';
+        abs = true;
+      } else if (i === 2 && sectors.length > 3) {
+        condition = 'type=="Number"';
+      }
+      code_tmp = "var res={value:'" + sectors[i] + "'};\nif (type == \"Number\" || type ==\"DateTime\") res.align = 'right';";
+      if (ptrn = sectors[i].match(/\[(Red|Green|White|Blue|Magenta|Yellow|Cyan|Black)]/i)) {
+        code_tmp += "res.color='" + ptrn[1] + "';";
+      }
+      sectors[i] = sectors[i].replace(/(\[((?!((\$*?)|(h*?)|(m*?)|(s*?))]).*?)])/, '');
+      if (sectors[i].match(/General/i)) {
+        code_tmp += "res.value=n;\nif (type == 'Number'){\n  if (!isNaN(n) && n!=''){\n    if (n<1e21 && n>-1e21){\n      n=parseFloat(n);\n      res.value=n;\n      if (n != parseInt(n / 1)) {\n        res.value = (Math.round(n*100)/100).toString().replace(/\\./,'" + DataFormatter.locale.decimal_separator + "');\n      }\n    }\n    else{\n      res.value=n.toString().toUpperCase();\n    }\n  }\n}\nelse if(type == 'DateTime' && !isNaN((new Date(n)).getTime())){\n  res.value = Math.abs((new Date(n)).getTime()-(new Date('1899-12-31T00:00:00.000')).getTime())/1000/60/60/24;\n}";
+      } else {
         if (sectors[i].match(/@/)) {
-          code_tmp += 'res.value="' + sectors[i] + '".replace(/@/,n);\n';
+          code_tmp += "res.value='" + sectors[i] + "'.replace(/@/,n);";
         } else if (sectors[i].match(/#|\?|0/)) {
-          digit_fun = 'n=parseFloat(n);\nres.align="right";\n';
+          digit_fun = "n=parseFloat(n);";
           if (abs) {
-            digit_fun += 'n=Math.abs(n);\n';
+            digit_fun += "n=Math.abs(n);";
           }
           if (ptrn = sectors[i].match(/(.*?)(?:(\.)(.*?))?e(?:\+|\-)(.*)/i)) {
             if (!ptrn[1]) {
@@ -103,17 +106,17 @@ window.DataFormatter = {
             if (!ptrn[4]) {
               ptrn[4] = '';
             }
-            digit_fun += 'var m=0,sign=n<0?-1:1;\n' + 'n=Math.abs(n);\n' + 'if(n!=0){\n' + ("while(n < " + int_part + " || Math.round(n*" + frac_part + ")/" + frac_part + "< " + int_part + "){\nn*=10;\nm++;\n}\n") + ("while(n>=" + int_part + " || Math.round(n*" + frac_part + ")/" + frac_part + ">=" + int_part + "){\nn/=10;\nm--;\n}\n") + '}\n' + ("n=(Math.round(n*sign*" + frac_part + ")/" + frac_part + ").toString().split('.');\n") + ("res.value=DataFormatter.fillNumberPattern(parseInt(n[0]),'" + ptrn[1] + "')+");
+            digit_fun += "var m=0,sign=n<0?-1:1;\nn=Math.abs(n);\nif(n!=0){\n while(n < " + int_part + " || Math.round(n*" + frac_part + ")/" + frac_part + " < " + int_part + "){\n   n*=10;\n   m++;\n }\n while(n >= " + int_part + " || Math.round(n*" + frac_part + ")/" + frac_part + " >= " + int_part + "){\n   n/=10;\n   m--;\n }\n}\nn=(Math.round(n*sign*" + frac_part + ")/" + frac_part + ").toString().split('.');\nres.value=DataFormatter.fillNumberPattern(parseInt(n[0]),'" + ptrn[1] + "');";
             if (ptrn[2]) {
               digit_fun += "'" + DataFormatter.locale.decimal_separator + "'+";
               if (ptrn[3]) {
                 digit_fun += "DataFormatter.fillNumberPattern(parseInt(n[1]),'" + ptrn[3] + "','right')+";
               }
             }
-            digit_fun += "'E'+(m>0?'-':'+')+DataFormatter.fillNumberPattern(Math.abs(m),'" + ptrn[4] + "');\n";
+            digit_fun += "'E'+(m>0?'-':'+')+DataFormatter.fillNumberPattern(Math.abs(m),'" + ptrn[4] + "');";
           } else {
             factor = 1;
-            sectors[i] = sectors[i].replace(/(0|#|\?)(\s+)([^0?#]*)$/, function(a, m1, m2, m3) {
+            sectors[i] = sectors[i].replace(/(0|#|\?)(,+)([^0?#]*)$/, function(a, m1, m2, m3) {
               factor *= Math.pow(1000, m2.length);
               return m1 + m3;
             });
@@ -134,9 +137,9 @@ window.DataFormatter = {
               ptrn[3] = ptrn[1].substr(0, d);
               ptrn[4] = ptrn[1].substr(d);
               if (!ptrn[3]) {
-                digit_fun += 'var m=n.toString().split("."); m=m[1]?Math.pow(10,m[1].length):1;\n' + 'n=Math.floor(n*m);' + 'var factor=DataFormatter.gcd(n,m);\n' + ("res.value=DataFormatter.fillNumberPattern(n/factor,'" + ptrn[4] + "')+") + '"/"+' + ("DataFormatter.fillNumberPattern(m/factor,'" + ptrn[2] + "');\n");
+                digit_fun += "var m=n.toString().split(\".\");\nm=m[1]?Math.pow(10,m[1].length):1;\nn=Math.floor(n*m);\nvar factor=DataFormatter.gcd(n,m);\nres.value=DataFormatter.fillNumberPattern(n/factor,'" + ptrn[4] + "')+'/'+DataFormatter.fillNumberPattern(m/factor,'" + ptrn[2] + "');";
               } else {
-                digit_fun += 'var f=0, factor=1, c=1, m=n.toString().split(".");\n' + 'if (m[1]) { c=Math.pow(10,m[1].length); f=parseInt(m[1]); factor=DataFormatter.gcd(f,c); }\n' + ("res.value=DataFormatter.fillNumberPattern(Math.floor(n),'" + ptrn[3] + "')+") + ("DataFormatter.fillNumberPattern(f/factor,'" + ptrn[4] + "')+") + '"/"+' + ("DataFormatter.fillNumberPattern(c/factor,'" + ptrn[2] + "');\n");
+                digit_fun += "var f=0, factor=1, c=1, m=n.toString().split('.');\nif(m[1]){c=Math.pow(10,m[1].length); f=parseInt(m[1]); factor=DataFormatter.gcd(f,c);}\nres.value=DataFormatter.fillNumberPattern(Math.floor(n),'" + ptrn[3] + "') + DataFormatter.fillNumberPattern(f/factor,'" + ptrn[4] + "') + '/' + DataFormatter.fillNumberPattern(c/factor,'" + ptrn[2] + "');";
               }
             } else if (ptrn = sectors[i].match(/(.*?)\.(.*)/)) {
               if (!ptrn[1]) {
@@ -148,79 +151,78 @@ window.DataFormatter = {
               } else {
                 frac_part = Math.pow(10, ptrn[2].match(/0|\?|#/g).length);
               }
-              ptrn[1] = ptrn[1].replace(/(0|#|\?)(\s+)([^0?#]*)$/, function(a, m1, m2, m3) {
+              ptrn[1] = ptrn[1].replace(/(0|#|\?)(,+)([^0?#]*)$/, function(a, m1, m2, m3) {
                 factor *= Math.pow(1000, m2.length);
                 return m1 + m3;
               });
-              digit_fun += ("n=(Math.round(n*" + frac_part + ")/" + frac_part + ").toString().split('.');\n") + ("res.value=DataFormatter.fillNumberPattern(parseInt(n[0]),'" + ptrn[1] + "')+") + ("'" + DataFormatter.locale.decimal_separator + "'+") + ("DataFormatter.fillNumberPattern(parseInt(n[1]||0),'" + ptrn[2] + "','right');\n");
+              digit_fun += "n=(Math.round(n*" + frac_part + ")/" + frac_part + ").toString().split('.');\nres.value=DataFormatter.fillNumberPattern(parseInt(n[0]),'" + ptrn[1] + "')+'" + DataFormatter.locale.decimal_separator + "'+DataFormatter.fillNumberPattern(parseInt(n[1]||0),'" + ptrn[2] + "','right');";
             } else {
-              digit_fun += "res.value=DataFormatter.fillNumberPattern(parseInt(n),'" + sectors[i] + "');\n";
+              digit_fun += "res.value=DataFormatter.fillNumberPattern(Math.round(n),'" + sectors[i] + "');";
             }
             if (factor !== 1) {
-              digit_fun = 'n/=' + factor + ';\n' + digit_fun;
+              digit_fun = "n/=" + factor + ";\n" + digit_fun;
             }
           }
-          digit_fun = "if(n<1e21 && n>-1e21){\n " + digit_fun + " }\nelse{\nres.value=n.toString().toUpperCase();\n}\n";
+          digit_fun = "if(n<1e21 && n>-1e21){\n  " + digit_fun + "\n}\nelse{\n  res.value=n.toString().toUpperCase();\n}";
           if (!condition) {
             condition = 'type=="Number"';
           }
           code_tmp += digit_fun;
-        } else {
+        } else if (sectors[i].match(/h|m|s|y/i)) {
           elapsed = false;
           sectors[i] = sectors[i].replace(/\[(h+?|m+?|s+?|y+?)]/ig, function(a, m1) {
             elapsed = true;
             return m1;
           });
-          code_tmp += 'if(type=="DateTime"){\n';
-          code_tmp += 'n=new Date(n);\n';
-          code_tmp += 'if (!isNaN(n.getTime())){\n';
-          code_tmp += 'res.align="right";\n';
+          code_tmp += "if(type=='DateTime'){\n  n=new Date(n);\n  if (!isNaN(n.getTime())){";
           if (elapsed) {
-            code_tmp += 'var m, found_hours, found_minutes;\n' + 'n=Math.abs(n.getTime()-(new Date("1899-12-31T00:00:00.000")).getTime());\n';
+            code_tmp += "var m, found_hours, found_minutes;\nn=Math.abs(n.getTime()-(new Date('1899-12-31T00:00:00.000')).getTime());";
             sectors[i] = sectors[i].replace(/a|p|am|pm|mmm|mmmm|mmmmm|d|y/gi, '');
             if (sectors[i].match(/h/i)) {
-              code_tmp += 'found_hours=true;\n';
+              code_tmp += "found_hours=true;";
             }
             if (sectors[i].match(/m/i)) {
-              code_tmp += 'found_minutes=true;\n';
+              code_tmp += "found_minutes=true;";
             }
-            code_tmp += ("res.value='" + sectors[i] + "'.replace(/(hh)|(h)|(mm)|(m)|(ss)|(s)/gi,function(a,hh,h,mm,m,ss,s){\n") + 'if (hh) { return (m=parseInt(n/1000/60/60))<10 ? "0"+m : m; }\n' + 'if (h) return parseInt(n/1000/60/60);\n' + 'if (mm) { m=found_hours ? parseInt(n/1000/60%60) : parseInt(n/1000/60) ;  return m<10 ? "0"+m : m; }\n' + 'if (m) { m=found_hours ? parseInt(n/1000/60%60) : parseInt(n/1000/60) ;  return m; }\n' + 'if (ss) { m=found_minutes ? parseInt(n/1000%60) : parseInt(n/1000) ;  return m<10 ? "0"+m : m; }\n' + 'if (s) { m=found_minutes ? parseInt(n/1000%60) : parseInt(n/1000) ;  return m; }\n' + 'return "";\n' + '});\n';
+            code_tmp += "res.value='" + sectors[i] + "'.replace(/(hh)|(h)|(mm)|(m)|(ss)|(s)/gi,function(a,hh,h,mm,m,ss,s){\n  if (hh) { return (m=parseInt(n/1000/60/60))<10 ? '0'+m : m; }\n  if (h) return parseInt(n/1000/60/60);\n  if (mm) { m=found_hours ? parseInt(n/1000/60%60) : parseInt(n/1000/60) ;  return m<10 ? '0'+m : m; }\n  if (m) { m=found_hours ? parseInt(n/1000/60%60) : parseInt(n/1000/60) ;  return m; }\n  if (ss) { m=found_minutes ? parseInt(n/1000%60) : parseInt(n/1000) ;  return m<10 ? '0'+m : m; }\n  if (s) { m=found_minutes ? parseInt(n/1000%60) : parseInt(n/1000) ;  return m; }\n  return '';\n});";
           } else {
-            code_tmp += 'var found_ampm;\n';
-            code_tmp += 'res.value="' + sectors[i] + '".replace(/((?:am\\/pm)|(?:a\\/p))|(?:(h[^ydsap]*?)mm)|(?:mm([^ydh]*?s))|(?:(h[^ydsap]*?)m)|(?:m([^ydh]*?s))/gi,function(a,ampm,fmin,fmin2,mmin,mmin2){\n' + 'if (ampm) { found_ampm=true; return "[]"; }\n' + 'if (fmin) { m=n.getMinutes(); return fmin + (m<10 ? "0" + m : m); }\n' + 'if (fmin2) { m=n.getMinutes(); return (m<10 ? "0" + m : m) + fmin2; }\n' + 'if (mmin) { return mmin + n.getMinutes(); }\n' + 'if (mmin2) { return n.getMinutes() + mmin2; }\n' + 'return "";\n' + '});\n' + 'res.value=res.value.replace(/(ss)|(s)|(hh)|(h)|(dddd)|(ddd)|(dd)|(d)|(mmmmm)|(mmmm)|(mmm)|(mm)|(m)|(yyyy)|(yy)|(\\[])/gi,function(a,ss,s,hh,h,dddd,ddd,dd,d,mmmmm,mmmm,mmm,mm,m,yyyy,yy,ampm){\n' + 'if (ss) { m=n.getSeconds(); return m<10 ? "0" + m : m; }\n' + 'if (s) { return n.getSeconds(); }\n' + 'if (hh) { m=n.getHours(); if (found_ampm) m=m%12; return m<10 ? "0" + m : m; }\n' + 'if (h) { return n.getHours(); if (found_ampm) m=m%12; }\n' + 'if (hh) { m=n.getHours(); return m<10 ? "0" + m : m; }\n' + 'if (dddd) { return DataFormatter.locale.days[n.getDay()]; }\n' + 'if (ddd) { return DataFormatter.locale.days_short[n.getDay()]; }\n' + 'if (dd) { m=n.getDate(); return m<10 ? "0" + m : m; }\n' + 'if (d) { return n.getDate(); }\n' + 'if (mmmmm) return DataFormatter.locale.months_short[n.getMonth()][0];\n' + 'if (mmmm) return DataFormatter.locale.months[n.getMonth()];\n' + 'if (mmm) return DataFormatter.locale.months_short[n.getMonth()];\n' + 'if (mm) { m=n.getMonth()+1; return m<10 ? "0" + m : m; }\n' + 'if (m) { return n.getMonth()+1; }\n' + 'if (yyyy) return n.getFullYear();\n' + 'if (yy) return n.getFullYear().toString().substr(2);\n' + 'if (ampm) return n.getHours()<12 ? "AM" : "PM";\n' + 'return "";\n' + '});\n';
+            code_tmp += "var found_ampm\nres.value='" + sectors[i] + "'.replace(/((?:am\\/pm)|(?:a\\/p))|(?:(h[^ydsap]*?)mm)|(?:mm([^ydh]*?s))|(?:(h[^ydsap]*?)m)|(?:m([^ydh]*?s))/gi,function(a,ampm,fmin,fmin2,mmin,mmin2){\n  if (ampm) { found_ampm=true; return '[]'; }\n  if (fmin) { m=n.getMinutes(); return fmin + (m<10 ? '0' + m : m); }\n  if (fmin2) { m=n.getMinutes(); return (m<10 ? '0' + m : m) + fmin2; }\n  if (mmin) return mmin + n.getMinutes();\n  if (mmin2) return n.getMinutes() + mmin2;\n  return '';\n  });\n  res.value=res.value.replace(/(ss)|(s)|(hh)|(h)|(dddd)|(ddd)|(dd)|(d)|(mmmmm)|(mmmm)|(mmm)|(mm)|(m)|(yyyy)|(yy)|(\\[])/gi,function(a,ss,s,hh,h,dddd,ddd,dd,d,mmmmm,mmmm,mmm,mm,m,yyyy,yy,ampm){\n  if (ss) { m=n.getSeconds(); return m<10 ? '0' + m : m; }\n  if (s) return n.getSeconds();\n  if (hh) { m=n.getHours(); if (found_ampm) m=m%12; return m<10 ? '0' + m : m; }\n  if (h) { if (found_ampm) m=m%12; return n.getHours(); }\n  if (hh) { m=n.getHours(); return m<10 ? '0' + m : m; }\n  if (dddd) return DataFormatter.locale.days[n.getDay()];\n  if (ddd) return DataFormatter.locale.days_short[n.getDay()];\n  if (dd) { m=n.getDate(); return m<10 ? '0' + m : m; }\n  if (d) return n.getDate();\n  if (mmmmm) return DataFormatter.locale.months_short[n.getMonth()][0];\n  if (mmmm) return DataFormatter.locale.months[n.getMonth()];\n  if (mmm) return DataFormatter.locale.months_short[n.getMonth()];\n  if (mm) m=n.getMonth()+1; return m<10 ? '0' + m : m;\n  if (m) return n.getMonth()+1;\n  if (yyyy) return n.getFullYear();\n  if (yy) return n.getFullYear().toString().substr(2);\n  if (ampm) return n.getHours()<12 ? 'AM' : 'PM';\n  return '';\n});";
           }
-          code_tmp += '\n}}\n';
+          code_tmp += "}}";
         }
-        code_tmp += 'res.value=DataFormatter.makeReplaces(res.value,repl);\n';
-        code_tmp += 'return res;\n';
-        code += condition ? "if(" + condition + "){\n " + code_tmp + " }\n\n" : code_tmp;
+        code_tmp += "res.value=DataFormatter.makeReplaces(res.value,repl);";
       }
-      code += 'return {value:n};\n';
+      code_tmp += "return res;";
+      code += condition ? "if(" + condition + "){\n  " + code_tmp + "\n}" : code_tmp;
     }
+    code += "return {value:n};";
+    console.log(code);
     return (DataFormatter.functions[pattern] = Function('n,type', code))(n, type);
   },
   fillNumberPattern: function(n, pattern, direction) {
-    var i, j, most_left_digit, s, separate_thousands, _i, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+    var i, j, most_left_digit, s, separate_thousands, t_l, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
     n = n.toString();
     s = '';
     if (direction === 'right') {
       j = 0;
-      for (i = _i = 0, _ref = pattern.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+      i = -1;
+      t_l = pattern.length;
+      while (++i < t_l) {
         switch (pattern[i]) {
           case '0':
-            s += (_ref1 = n[j]) != null ? _ref1 : '0';
+            s += (_ref = n[j]) != null ? _ref : '0';
             j++;
             break;
           case '#':
-            s += (_ref2 = n[j]) != null ? _ref2 : '';
+            s += (_ref1 = n[j]) != null ? _ref1 : '';
             j++;
             break;
           case '?':
-            s += (_ref3 = n[j]) != null ? _ref3 : ' ';
+            s += (_ref2 = n[j]) != null ? _ref2 : ' ';
             j++;
             break;
           case '[':
-            while (i < pattern.length && pattern[i] !== '') {
+            while (i < pattern.length && pattern[i] !== ']') {
               s += pattern[i];
               i++;
             }
@@ -248,17 +250,17 @@ window.DataFormatter = {
       while (i--) {
         switch (pattern[i]) {
           case '0':
-            s = ((_ref4 = n[j]) != null ? _ref4 : '0') + s;
+            s = ((_ref3 = n[j]) != null ? _ref3 : '0') + s;
             most_left_digit = i;
             j--;
             break;
           case '#':
-            s = ((_ref5 = n[j]) != null ? _ref5 : '') + s;
+            s = ((_ref4 = n[j]) != null ? _ref4 : '') + s;
             most_left_digit = i;
             j--;
             break;
           case '?':
-            s = ((_ref6 = n[j]) != null ? _ref6 : ' ') + s;
+            s = ((_ref5 = n[j]) != null ? _ref5 : ' ') + s;
             most_left_digit = i;
             j--;
             break;
@@ -280,7 +282,7 @@ window.DataFormatter = {
     return s;
   },
   makeReplaces: function(s, repl) {
-    return s.replace(/\[(?:(\$*)|(.*))]/g, function(a, m1) {
+    return s = s.replace(/\[(?:(\$*?)|(.*?))\]/g, function(a, m1) {
       if (m1 && repl[m1.length]) {
         return repl[m1.length];
       } else {
