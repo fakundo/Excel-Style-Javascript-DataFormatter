@@ -30,6 +30,7 @@ window.DataFormatter =
 
   # Main function
   format: (n,type,pattern)->
+    n = n.toString()
     pattern = pattern.toString()
     # If function for this pattern already exists
     return DataFormatter.functions[pattern](n, type) if DataFormatter.functions[pattern]
