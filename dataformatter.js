@@ -29,6 +29,7 @@ window.DataFormatter = {
   },
   format: function(n, type, pattern) {
     var abs, code, code_tmp, condition, d, digit_fun, elapsed, factor, frac_part, i, int_part, ptrn, repl, repl_$, sectors, t_l;
+    n = n.toString();
     pattern = pattern.toString();
     if (DataFormatter.functions[pattern]) {
       return DataFormatter.functions[pattern](n, type);

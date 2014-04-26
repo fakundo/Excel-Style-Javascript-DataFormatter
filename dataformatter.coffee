@@ -29,12 +29,16 @@ window.DataFormatter = # Saved functions for each pattern
 
 # Main function
   format: (n, type, pattern)->
-    pattern = pattern.toString() # If function for this pattern already exists
+    n = n.toString()
+    pattern = pattern.toString()
+    # If function for this pattern already exists
     return DataFormatter.functions[pattern](n, type) if DataFormatter.functions[pattern]
     code = ''
     repl = ''
-    repl_$ = '' # Special for General format
-    sectors = pattern # Predefined excel formats
+    repl_$ = ''
+    # Special for General format
+    sectors = pattern
+    # Predefined excel formats
     sectors = DataFormatter.locale.formats[sectors] if DataFormatter.locale.formats[sectors] # Replace strings in quotes and slashed symbols to $$$, remove unnecessary symbols
     sectors = sectors.replace(/"([^"]+)"|\\(.?)|(_.?)|(\*.?)|(")/g, (a, m1, m2, m3) ->
       # Quotes
