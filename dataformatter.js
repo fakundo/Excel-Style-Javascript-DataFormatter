@@ -301,4 +301,4 @@ window.DataFormatter = {
   }
 };
 
-//# sourceMappingURL=dataformatter.js.map
+//# sourceMappingURL=dataformatter.map
