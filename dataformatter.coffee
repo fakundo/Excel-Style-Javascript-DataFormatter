@@ -159,17 +159,17 @@ window.DataFormatter = # Saved functions for each pattern
              }
             }
             n=(Math.round(n*sign*#{frac_part})/#{frac_part}).toString().split('.');
-            res.value=DataFormatter.fillNumberPattern(parseInt(n[0]),'#{ptrn[1]}');
+            res.value=DataFormatter.fillNumberPattern(parseInt(n[0]),'#{ptrn[1]}')
             """
             if ptrn[2]
               digit_fun += """
-              '#{DataFormatter.locale.decimal_separator}'+
+              +'#{DataFormatter.locale.decimal_separator}'
               """
               if ptrn[3] then digit_fun += """
-              DataFormatter.fillNumberPattern(parseInt(n[1]),'#{ptrn[3]}','right')+
+              +DataFormatter.fillNumberPattern(parseInt(n[1] ? n[1] : 0),'#{ptrn[3]}','right')
               """
             digit_fun += """
-            'E'+(m>0?'-':'+')+DataFormatter.fillNumberPattern(Math.abs(m),'#{ptrn[4]}');
+            +'E'+(m>0?'-':'+')+DataFormatter.fillNumberPattern(Math.abs(m),'#{ptrn[4]}');
             """
           else
             factor = 1
