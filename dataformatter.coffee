@@ -302,7 +302,7 @@ window.DataFormatter = # Saved functions for each pattern
               if (mmmmm) return DataFormatter.locale.months_short[n.getMonth()][0];
               if (mmmm) return DataFormatter.locale.months[n.getMonth()];
               if (mmm) return DataFormatter.locale.months_short[n.getMonth()];
-              if (mm) m=n.getMonth()+1; return m<10 ? '0' + m : m;
+              if (mm) { m=n.getMonth()+1; return m<10 ? '0' + m : m; }
               if (m) return n.getMonth()+1;
               if (yyyy) return n.getFullYear();
               if (yy) return n.getFullYear().toString().substr(2);
