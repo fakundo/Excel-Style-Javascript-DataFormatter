@@ -1,28 +1,4 @@
 /**
- * Invokes func for every element
- */
-export function each(obj, func) {
-  for (let key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      func(obj[key], key);
-    }
-  }
-};
-
-/**
- * Transform values
- */
-export function map(obj, func) {
-  var res = [];
-  for (let key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      res.push(func(obj[key], key));
-    }
-  }
-  return res;
-};
-
-/**
  * Extends object
  */
 export function extend(a, ...b) {
@@ -50,31 +26,21 @@ export function formatString(s, ...args) {
  */
 export class Code {
 
-  constructor(opts = {}) {
-    // Default opts
-    this.opts = extend({
-      debug: false
-    }, opts);
-
+  constructor() {
     this.code = '';
   }
 
   makeString(s, ...values) {
-    values = map(values, (val)=> JSON.stringify(val));
+    values = values.map(JSON.stringify);
     return formatString(s, ...values);
   };
 
   append() {
     this.code += this.makeString(...arguments);
-    if (this.opts.debug) this.code += '\n';
   }
 
   toString() {
     return this.code;
-  }
-
-  appendRaw(str) {
-    this.code += str;
   }
 
 };
