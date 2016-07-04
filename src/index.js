@@ -8,7 +8,7 @@ class DataFormatter {
    * Constructor
    * Available options are:
    *   debug {boolean} - enable debug mode
-   *   UTCOffset {number|null} - UTC offset in minutes for dates
+   *   UTCOffset {number|null} - UTC offset for dates in minutes
    *   locale {string}
    *   transformCode {function} - code transformer
    * @param {object} options
@@ -82,6 +82,17 @@ class DataFormatter {
     if (this.debug) {
       console.log(message);
     }
+  }
+
+  /**
+   * Rounds value
+   * @param  {[type]} n        Value to be round
+   * @param  {[type]} decimals Amount of decimal digits
+   * @return {number}          Rounded value
+   */
+  roundDecimals(n, decimals) {
+    const pow = Math.pow(10, decimals);
+    return Math.round(n * pow) / pow;
   }
 
   /**
@@ -201,7 +212,7 @@ class DataFormatter {
 
   formatAsNumberDecimal(n, decimals, patternIntegerPart, patternDecimalPart) {
 
-    n = n.toFixed(decimals).toString().split('.');
+    n = this.roundDecimals(n, decimals).toString().split('.');
     let integerPart = parseInt(n[0]);
     let decimalPart = parseInt(n[1] || 0);
 
@@ -251,19 +262,19 @@ class DataFormatter {
 
       let integerPartDivision = Math.pow(10, integerPart);
 
-      while(n < integerPartDivision || n.toFixed(decimalPart) < integerPartDivision){
+      while(n < integerPartDivision || this.roundDecimals(n, decimalPart) < integerPartDivision){
         n *= 10;
         pow ++;
       }
 
-      while(n >= integerPartDivision || n.toFixed(decimalPart) >= integerPartDivision){
+      while(n >= integerPartDivision || this.roundDecimals(n, decimalPart) >= integerPartDivision){
         n /= 10;
         pow --;
       }
 
     }
 
-    n = (n * sign).toFixed(decimalPart).toString().split('.');
+    n = this.roundDecimals(n * sign, decimalPart).toString().split('.');
 
     // Build res
     let res = '';
@@ -964,15 +975,14 @@ class DataFormatter {
 // Create instance
 const dataFormatter = new DataFormatter();
 
-// Add AMD support
-if (typeof define === 'function' && define.amd) {
-  define('dataFormatter', ()=> dataFormatter);
-  define('DataFormatter', ()=> DataFormatter);
-}
 // CommonJS
-else if (typeof module === 'object' && module.exports) {
-  module.exports = dataFormatter;
-  module.exports.DataFormatter = DataFormatter;
+module.exports = dataFormatter;
+module.exports.DataFormatter = DataFormatter;
+
+// AMD
+if (typeof global.define === 'function' && global.define.amd) {
+  global.define('dataFormatter', ()=> dataFormatter);
+  global.define('DataFormatter', ()=> DataFormatter);
 }
 // Window
 else {

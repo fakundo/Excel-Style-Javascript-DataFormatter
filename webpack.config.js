@@ -10,17 +10,17 @@ module.exports = {
   bail: true,
   plugins: [
     new NyanProgressPlugin(),
-    // new webpack.optimize.UglifyJsPlugin({
-    //   compressor: {
-    //     warnings: false
-    //   }
-    // })
+    new webpack.optimize.UglifyJsPlugin({
+      compressor: {
+        warnings: false
+      }
+    })
   ],
   module: {
     loaders: [
       {
         test: /\.js?$/,
-        loader: 'imports?define=>false!babel',
+        loader: 'babel',
         exclude: /node_modules/
       }
     ]

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='UTF-8'>
+  <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.js'></script>
+</head>
+<body>
+  <script>
+    require(['../../dist/excel-style-dataformatter.js'], function() {
+
+      require(['dataFormatter'], function(dataFormatter) {
+        document.write(dataFormatter.format('99', 'Number', 'Currency').value);
+      });
+
+    });
+  </script>
+</body>
+</html>
