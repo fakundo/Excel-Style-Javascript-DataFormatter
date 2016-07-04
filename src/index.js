@@ -1,19 +1,23 @@
-import { Code, extend } from './utils';
+import { Code } from './utils';
 
-const zeroDate = new Date('1899-12-31T00:00:00.000');
 const defaultLocale = 'en-US';
 
 class DataFormatter {
 
-  constructor(opts = {}) {
-    // Set default options
-    this.opts = extend({
-      debug: false,
-      locale: defaultLocale,
-      transformCode: (code)=> code
-    }, opts);
+  constructor({
+    debug = false,
+    UTCOffset = null,
+    locale = defaultLocale,
+    transformCode = (code)=> code
+  } = {}) {
 
-    this.setLocale(this.opts.locale);
+    this.memoized = {};
+    this.debug = debug;
+    this.UTCOffset = UTCOffset;
+    this.transformCode = transformCode;
+    this.zeroDate = this.createDate('1899-12-31T00:00:00.000');
+
+    this.setLocale(locale);
   }
 
   clearMemoizedFunctions() {
@@ -29,8 +33,26 @@ class DataFormatter {
     this.clearMemoizedFunctions();
   }
 
+  setUTCOffset(UTCOffset) {
+    this.UTCOffset = UTCOffset;
+  }
+
+  createDate() {
+    let date = new Date(...arguments);
+
+    if (this.UTCOffset !== null) {
+      let clientOffset = date.getTimezoneOffset();
+      let newOffset = this.UTCOffset + clientOffset;
+      let newOffsetMs = newOffset * 60 * 1000;
+
+      date.setTime(date.getTime() + newOffsetMs);
+    }
+
+    return date;
+  }
+
   log(message) {
-    if (this.opts.debug) {
+    if (this.debug) {
       console.log(message);
     }
   }
@@ -151,7 +173,7 @@ class DataFormatter {
 
   restoreOrigins(value, origins) {
     return value.toString().replace(/\[(?:(\$*?)|(.*?))\]/g, (a, m1)=>
-      m1 && origins[m1.length - 1] || ''
+      m1 && origins[m1.length - 1] || a
     );
   }
 
@@ -243,7 +265,7 @@ class DataFormatter {
 
   formatAsDateTimeElapsed(n, foundDays, foundHours, foundMinutes, pattern) {
 
-    n = Math.abs(n.getTime() - zeroDate.getTime());
+    n = Math.abs(n.getTime() - this.zeroDate.getTime());
 
     let seconds = parseInt(n / 1000);
     let minutes = parseInt(seconds / 60);
@@ -405,7 +427,7 @@ class DataFormatter {
     let code = new Code();
 
     code.append(`
-      res.value = {0}.replace(/@/, n);
+      result.value = {0}.replace(/@/, n);
     `, section);
 
     return code.toString();
@@ -413,7 +435,7 @@ class DataFormatter {
 
   createGeneralCode() {
     let code = new Code();
-    let numberCode = this.createNumberCode('0.00');
+    let numberCode = this.createNumberCode('#.00');
     let dateTimeCode = this.createDateTimeCode('[d]');
 
     code.append(`
@@ -583,10 +605,10 @@ class DataFormatter {
     else {
       let factor = 1;
 
-      // Spaces before end
-      section = section.replace(/(0|#|\?)(\s+)([^0?#]*)$/, (a, m1, m2, m3)=> {
+      // Spaces before end and decimal separator (.)
+      section = section.replace(/(0|#|\?)(\s+)([^0?#]*?)($|\.)/, (a, m1, m2, m3, m4)=> {
         factor *= Math.pow(1000, m2.length);
-        return m1 + m3;
+        return m1 + m3 + m4;
       });
 
       // Percents
@@ -680,7 +702,7 @@ class DataFormatter {
     let code = new Code();
     let elapsed = false;
 
-    section = section.replace(/\[(h+?|m+?|s+?|y+?)]/ig, (a, m1)=> {
+    section = section.replace(/\[(h+?|m+?|s+?|y+?|d+?)]/ig, (a, m1)=> {
       elapsed = true;
       return m1;
     });
@@ -690,7 +712,7 @@ class DataFormatter {
                        this.createDateTimeNormalCode(section);
 
     code.append(`
-      n = new Date(n);
+      n = this.createDate(n);
       if (!isNaN(n.getTime())) {
         ${dateTimeCode}
       }
@@ -737,13 +759,13 @@ class DataFormatter {
 
     }
 
-    // Text color
-    let colorMatch = section.match(/\[(Red|Green|White|Blue|Magenta|Yellow|Cyan|Black)]/i);
-    if (colorMatch) {
+    // Find text color
+    section = section.replace(/\[(Red|Green|White|Blue|Magenta|Yellow|Cyan|Black)]/gi, (a, m1)=> {
       code.append(`
         result.color = {0};
-      `, colorMatch[1]);
-    }
+      `, m1);
+      return '';
+    });
 
     // Remove all [], except our replacements and elapsed days, hours, minutes, seconds
     section = section.replace(/(\[((?!((\$*?)|(d*?)|(h*?)|(m*?)|(s*?))]).*?)])/, '');
@@ -868,6 +890,13 @@ class DataFormatter {
       code.append(this.createSectionCode(section, sectionIndex, sections.length))
     );
 
+    // Return statement
+    code.append(`
+      result.value = {0};
+      result.pattern = {0};
+      return makeResult.call(this);
+    `, patternReplaced);
+
     return code.toString();
   }
 
@@ -888,7 +917,7 @@ class DataFormatter {
       let code = this.createPatternCode(pattern);
 
       // Transform code
-      code = this.opts.transformCode(code);
+      code = this.transformCode(code);
 
       // Memoize function
       this.memoized[pattern] = Function('n', 'type', code);
