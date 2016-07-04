@@ -4,6 +4,15 @@ const defaultLocale = 'en-US';
 
 class DataFormatter {
 
+  /**
+   * Constructor
+   * Available options are:
+   *   debug {boolean} - enable debug mode
+   *   UTCOffset {number|null} - UTC offset in minutes for dates
+   *   locale {string}
+   *   transformCode {function} - code transformer
+   * @param {object} options
+   */
   constructor({
     debug = false,
     UTCOffset = null,
@@ -20,10 +29,18 @@ class DataFormatter {
     this.setLocale(locale);
   }
 
+  /**
+   * Resets memoized pattern functions
+   */
   clearMemoizedFunctions() {
     this.memoized = {};
   }
 
+  /**
+   * Sets locale
+   * If locale doesn't exist, sets default
+   * @param {string} locale
+   */
   setLocale(locale) {
     let localeData = require('./locales/' + locale + '.js');
     if (!localeData) {
@@ -33,10 +50,17 @@ class DataFormatter {
     this.clearMemoizedFunctions();
   }
 
+  /**
+   * Sets UTC offset for dates
+   * @param {number|null} UTCOffset in minutes
+   */
   setUTCOffset(UTCOffset) {
     this.UTCOffset = UTCOffset;
   }
 
+  /**
+   * Creates new date instance
+   */
   createDate() {
     let date = new Date(...arguments);
 
@@ -51,6 +75,9 @@ class DataFormatter {
     return date;
   }
 
+  /**
+   * Logger
+   */
   log(message) {
     if (this.debug) {
       console.log(message);
@@ -68,11 +95,6 @@ class DataFormatter {
       b = r;
     }
     return a;
-  }
-
-  toFixed(n, decimals) {
-    let factor = Math.pow(10, decimals);
-    return Math.round(n * factor) / factor;
   }
 
   applyNumberPattern(n, pattern, direction) {
@@ -179,7 +201,7 @@ class DataFormatter {
 
   formatAsNumberDecimal(n, decimals, patternIntegerPart, patternDecimalPart) {
 
-    n = this.toFixed(n, decimals).toString().split('.');
+    n = n.toFixed(decimals).toString().split('.');
     let integerPart = parseInt(n[0]);
     let decimalPart = parseInt(n[1] || 0);
 
@@ -229,19 +251,19 @@ class DataFormatter {
 
       let integerPartDivision = Math.pow(10, integerPart);
 
-      while(n < integerPartDivision || this.toFixed(n, decimalPart) < integerPartDivision){
+      while(n < integerPartDivision || n.toFixed(decimalPart) < integerPartDivision){
         n *= 10;
         pow ++;
       }
 
-      while(n >= integerPartDivision || this.toFixed(n, decimalPart) >= integerPartDivision){
+      while(n >= integerPartDivision || n.toFixed(decimalPart) >= integerPartDivision){
         n /= 10;
         pow --;
       }
 
     }
 
-    n = this.toFixed(n * sign, decimalPart).toString().split('.');
+    n = (n * sign).toFixed(decimalPart).toString().split('.');
 
     // Build res
     let res = '';

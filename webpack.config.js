@@ -5,22 +5,22 @@ module.exports = {
   entry: __dirname + '/src/index',
   devtool: 'source-map',
   output: {
-    filename: 'test.js'
+    filename: 'excel-style-dataformatter.js'
   },
   bail: true,
   plugins: [
     new NyanProgressPlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        warnings: false
-      }
-    })
+    // new webpack.optimize.UglifyJsPlugin({
+    //   compressor: {
+    //     warnings: false
+    //   }
+    // })
   ],
   module: {
     loaders: [
       {
         test: /\.js?$/,
-        loader: 'babel',
+        loader: 'imports?define=>false!babel',
         exclude: /node_modules/
       }
     ]

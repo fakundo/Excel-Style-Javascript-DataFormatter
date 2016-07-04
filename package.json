@@ -2,7 +2,7 @@
   "name": "excel-style-dataformatter",
   "version": "1.0.0",
   "description": "Excel-Style Javascript Data Formatter",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha",
     "dev": "gulp dev",
@@ -10,16 +10,16 @@
     "build": "gulp build",
     "prepublish": "npm run clean && npm run build && npm run test"
   },
-  "author": "",
+  "author": "Roman Samoylov (https://github.com/fakundo)",
   "license": "ISC",
   "devDependencies": {
-    "babel-cli": "^6.10.1",
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.9.0",
     "chai": "^3.5.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-nodemon": "^2.1.0",
+    "imports-loader": "^0.6.5",
     "js-beautify": "^1.6.3",
     "mocha": "^2.5.3",
     "nyan-progress-webpack-plugin": "^1.1.4",

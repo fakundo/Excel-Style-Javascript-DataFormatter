@@ -19,7 +19,7 @@ export class Code {
   makeString(s, ...values) {
     values = values.map(JSON.stringify);
     return formatString(s, ...values);
-  };
+  }
 
   append() {
     this.code += this.makeString(...arguments);

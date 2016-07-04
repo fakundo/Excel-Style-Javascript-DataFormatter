@@ -1,15 +1,15 @@
 Excel-Style Javascript Data Formatter
-==================================================
+===
 
 Current version supports:
---------------------------------------
+---
 1. Number formatting (decimal form, fractional form, percents, etc.)
 2. Date formatting (elapsed time, am/pm)
 3. Predefined excel formats (Fixed, Standard, etc.)
 4. Localization
 
 Usage:
---------------------------------------
+---
 ```js
 DataFormatter.format("12.34","Number","0.0") //12.3
 DataFormatter.format("99.99","Number","Currency") //99,99р.
