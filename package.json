@@ -10,6 +10,9 @@
     "build": "gulp build",
     "prepublish": "npm run clean && npm run build && npm run test"
   },
+  "publishConfig":{
+    "registry": "https://registry.npmjs.org/"
+  },
   "author": "Roman Samoylov (https://github.com/fakundo)",
   "license": "ISC",
   "devDependencies": {

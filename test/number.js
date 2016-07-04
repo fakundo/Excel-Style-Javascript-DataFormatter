@@ -10,6 +10,7 @@ describe('Number', ()=> {
     assert.equal(dataFormatter.format('45.123', 'Number', '0.0').value, '45,1');
     assert.equal(dataFormatter.format('3.3', 'Number', '###.###').value, '3,3');
     assert.equal(dataFormatter.format('-32', 'Number', '#.????').value, '-32,0   ');
+    assert.equal(dataFormatter.format('-0.251', 'Number', '#,##0.00').value, '-0,25');
   });
 
   it('Exponential form', ()=> {
@@ -24,6 +25,8 @@ describe('Number', ()=> {
   it('Fractions', ()=> {
     assert.equal(dataFormatter.format('0.75', 'Number', '0/0').value, '3/4');
     assert.equal(dataFormatter.format('13.5', 'Number', '0 0/0').value, '13 1/2');
+    assert.equal(dataFormatter.format('-0.5', 'Number', '0/0').value, '-1/2');
+    assert.equal(dataFormatter.format('-10.5', 'Number', '0 0/0').value, '-10 1/2');
   });
 
   it('Integer', ()=> {
@@ -36,6 +39,7 @@ describe('Number', ()=> {
     assert.equal(dataFormatter.format('123', 'Number', '0-0').value, '12-3');
     assert.equal(dataFormatter.format('123000', 'Number', '0,0-0').value, '123 00-0');
     assert.equal(dataFormatter.format('123000', 'Number', '0,0-0 ').value, '12-3');
+    assert.equal(dataFormatter.format('-0', 'Number', '#').value, '0');
   });
 
   it('Division spaces', ()=> {

@@ -105,7 +105,7 @@ class DataFormatter {
       a = b;
       b = r;
     }
-    return a;
+    return Math.abs(a);
   }
 
   applyNumberPattern(n, pattern, direction) {
@@ -213,8 +213,8 @@ class DataFormatter {
   formatAsNumberDecimal(n, decimals, patternIntegerPart, patternDecimalPart) {
 
     n = this.roundDecimals(n, decimals).toString().split('.');
-    let integerPart = parseInt(n[0]);
-    let decimalPart = parseInt(n[1] || 0);
+    let integerPart = n[0];
+    let decimalPart = n[1] || 0;
 
     return this.applyNumberPattern(integerPart, patternIntegerPart) +
       this.locale.decimalSeparator +
@@ -245,13 +245,13 @@ class DataFormatter {
       factor = this.gcd(f, c);
     }
 
-    return this.applyNumberPattern(Math.floor(n), leftPatternNumeratorPart) +
+    return this.applyNumberPattern(parseInt(n), leftPatternNumeratorPart) +
       this.applyNumberPattern(f / factor, rightPatternNumeratorPart) +
       '/' +
       this.applyNumberPattern(c / factor, patternDenominatorPart);
   }
 
-  formatAsNumberExponential(n, integerPart, decimalPart, patternIntegerPart, patternDecimalPart, patternPowPart) {
+  formatAsNumberExponential(n, integerPartLength, decimalPartLength, patternIntegerPart, patternDecimalPart, patternPowPart) {
 
     let sign = n < 0 ? -1 : 1;
     let pow = 0;
@@ -260,21 +260,21 @@ class DataFormatter {
 
       n = Math.abs(n);
 
-      let integerPartDivision = Math.pow(10, integerPart);
+      let integerPartDivision = Math.pow(10, integerPartLength);
 
-      while(n < integerPartDivision || this.roundDecimals(n, decimalPart) < integerPartDivision){
+      while(n < integerPartDivision || this.roundDecimals(n, decimalPartLength) < integerPartDivision){
         n *= 10;
         pow ++;
       }
 
-      while(n >= integerPartDivision || this.roundDecimals(n, decimalPart) >= integerPartDivision){
+      while(n >= integerPartDivision || this.roundDecimals(n, decimalPartLength) >= integerPartDivision){
         n /= 10;
         pow --;
       }
 
     }
 
-    n = this.roundDecimals(n * sign, decimalPart).toString().split('.');
+    n = this.roundDecimals(n * sign, decimalPartLength).toString().split('.');
 
     // Build res
     let res = '';
@@ -488,34 +488,34 @@ class DataFormatter {
     let patternDecimalPart = exponentialMatch[2];
     let patternPowPart = exponentialMatch[3];
     let code = new Code();
-    let integerPart;
-    let decimalPart;
+    let integerPartLength;
+    let decimalPartLength;
 
     let zerosCount = (s)=> s.match(/0|\?|#/g).length;
 
     // Integer part
     if (!patternIntegerPart) {
       patternIntegerPart = '#';
-      integerPart = 1;
+      integerPartLength = 1;
     }
     else {
-      integerPart = zerosCount(patternIntegerPart);
+      integerPartLength = zerosCount(patternIntegerPart);
     }
 
     // Decimal part
     if (!patternDecimalPart) {
       patternDecimalPart = '';
-      decimalPart = 0;
+      decimalPartLength = 0;
     }
     else {
-      decimalPart = zerosCount(patternDecimalPart);
+      decimalPartLength = zerosCount(patternDecimalPart);
     }
 
     code.append(`
       result.value = this.formatAsNumberExponential(n, {0}, {1}, {2}, {3}, {4});
     `,
-      integerPart,
-      decimalPart,
+      integerPartLength,
+      decimalPartLength,
       patternIntegerPart,
       patternDecimalPart,
       patternPowPart
