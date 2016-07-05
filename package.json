@@ -1,6 +1,6 @@
 {
   "name": "excel-style-dataformatter",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Excel-Style Javascript Data Formatter",
   "main": "lib/index.js",
   "scripts": {
@@ -19,6 +19,10 @@
   ],
   "publishConfig":{
     "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/Fakundo/Excel-Style-Javascript-DataFormatter"
   },
   "author": "Roman Samoylov (https://github.com/fakundo)",
   "license": "ISC",
