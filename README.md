@@ -1,5 +1,7 @@
 #Excel-Style Javascript Data Formatter
 
+[![npm](https://img.shields.io/npm/v/excel-style-dataformatter.svg?maxAge=2592000)](https://www.npmjs.org/package/excel-style-dataformatter)
+
 ##Current version supports
 - Number formatting (decimal form, fractional form, percents, etc.)
 - Date formatting (elapsed time, am/pm)
