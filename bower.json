@@ -1,0 +1,20 @@
+{
+  "name": "excel-style-dataformatter",
+  "description": "Excel-Style Javascript Data Formatter",
+  "main": "lib/index.js",
+  "authors": [
+    "Roman Samoylov (https://github.com/fakundo)"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "excel-like",
+    "excel-style",
+    "excel",
+    "format",
+    "dataformatter"
+  ],
+  "homepage": "",
+  "ignore": [
+    "node_modules"
+  ]
+}

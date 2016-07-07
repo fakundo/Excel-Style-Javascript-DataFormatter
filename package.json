@@ -25,7 +25,7 @@
       "url": "https://github.com/Fakundo/Excel-Style-Javascript-DataFormatter"
   },
   "author": "Roman Samoylov (https://github.com/fakundo)",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "babel-loader": "^6.2.4",
     "babel-plugin-transform-runtime": "^6.9.0",
