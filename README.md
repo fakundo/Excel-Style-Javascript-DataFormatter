@@ -6,13 +6,19 @@
 - Predefined excel formats (Fixed, Standard, etc.)
 - Localization
 
-#Usage
-
-##CommonJS
+#Install
 
 ```
 npm install excel-style-dataformatter
 ```
+
+```
+bower install excel-style-dataformatter
+```
+
+#Usage
+
+##CommonJS
 
 ```js
 import dataFormatter from 'excel-style-dataformatter';
