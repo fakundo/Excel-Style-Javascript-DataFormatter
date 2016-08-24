@@ -20,6 +20,7 @@ describe('Number', ()=> {
     assert.equal(dataFormatter.format('-18000', 'Number', '0.00E+0').value, '-1,80E+4');
     assert.equal(dataFormatter.format('0.0000034', 'Number', '0.00E+0').value, '3,40E-6');
     assert.equal(dataFormatter.format('0', 'Number', '0E+0').value, '0E+0');
+    assert.equal(dataFormatter.format('1000000000', 'Number', '0.0E+0').value, '1,0E+9');
   });
 
   it('Fractions', ()=> {

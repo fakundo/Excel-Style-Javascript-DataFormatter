@@ -14,4 +14,4 @@ var dataFormatter = new _lib.DataFormatter({
   transformCode: _jsBeautify2.default
 });
 
-dataFormatter.format('-1.5', 'Number', '0 0/0');
+dataFormatter.format('2000', 'Number', '0.0E+0');

@@ -285,7 +285,7 @@ class DataFormatter {
     // Decimal part
     if (patternDecimalPart) {
       res += this.locale.decimalSeparator +
-        this.applyNumberPattern(parseInt(n[1]), patternDecimalPart, 'right');
+        this.applyNumberPattern(parseInt(n[1] || 0), patternDecimalPart, 'right');
     }
 
     // Pow part
