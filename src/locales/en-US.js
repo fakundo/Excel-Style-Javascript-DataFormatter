@@ -4,7 +4,7 @@ export default {
   days: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
   daysShort: ['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa'],
   thousandSeparator: ' ',
-  decimalSeparator: ',',
+  decimalSeparator: '.',
   formats: {
     'General Number': '#.#',
     'Currency': '$ #,##0.00;[Red]$ -#,##0.00',
