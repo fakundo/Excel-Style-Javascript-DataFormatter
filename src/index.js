@@ -970,7 +970,7 @@ class DataFormatter {
     return result;
   }
 
-};
+}
 
 // Create instance
 const dataFormatter = new DataFormatter();

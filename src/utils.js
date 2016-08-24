@@ -5,7 +5,7 @@ export function formatString(s, ...args) {
   return s.replace(/{(\d+)}/g, (match, number)=>
     typeof args[number] != 'undefined' ? args[number] : match
   );
-};
+}
 
 /**
  * Class for building code
@@ -29,4 +29,4 @@ export class Code {
     return this.code;
   }
 
-};
+}
