@@ -1,15 +1,43 @@
+const path = require('path');
 const webpack = require('webpack');
-const NyanProgressPlugin = require('nyan-progress-webpack-plugin');
 
-module.exports = {
-  entry: __dirname + '/src/index',
+const entries = [
+
+  {
+    filename: 'index',
+    library: 'DataFormatter',
+    src: path.join(__dirname, 'src'),
+    path: path.join(__dirname, 'lib')
+  },
+
+  {
+    filename: 'ru',
+    library: 'DataFormatter_ru',
+    src: path.join(__dirname, 'src', 'locales', 'ru'),
+    path: path.join(__dirname, 'lib', 'locales')
+  },
+
+  {
+    filename: 'en-US',
+    library: 'DataFormatter_enUS',
+    src: path.join(__dirname, 'src', 'locales', 'en-US'),
+    path: path.join(__dirname, 'lib', 'locales')
+  }
+
+];
+
+module.exports = entries.map((entry)=> ({
+  entry: entry.src,
   devtool: 'source-map',
   output: {
-    filename: 'excel-style-dataformatter.js'
+    library: entry.library,
+    libraryTarget: 'umd',
+    umdNamedDefine: true,
+    filename: entry.filename + '.js',
+    path: entry.path
   },
   bail: true,
   plugins: [
-    new NyanProgressPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compressor: {
         warnings: false
@@ -25,4 +53,4 @@ module.exports = {
       }
     ]
   }
-};
+}));

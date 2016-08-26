@@ -6,9 +6,15 @@
 </head>
 <body>
   <script>
-    require(['../../dist/excel-style-dataformatter.js'], function() {
+    require(['../../lib/index', '../../lib/locales/ru'], function() {
 
-      require(['dataFormatter'], function(dataFormatter) {
+      require(['DataFormatter', 'DataFormatter_ru'], function(DataFormatter, ru) {
+        var dataFormatter = new DataFormatter({ locales: [ru] });
+
+        document.write(dataFormatter.format('99', 'Number', 'Currency').value);
+
+        dataFormatter.setLocale('ru');
+        document.write('</br>');
         document.write(dataFormatter.format('99', 'Number', 'Currency').value);
       });
 

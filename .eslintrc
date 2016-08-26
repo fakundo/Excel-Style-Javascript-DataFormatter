@@ -3,7 +3,8 @@
   "rules": {
     "strict": 0,
     "no-console": "off",
-    "no-case": "off"
+    "no-case": "off",
+    "no-case-declarations": "off"
   },
   "extends": ["eslint:recommended"],
   "env": {

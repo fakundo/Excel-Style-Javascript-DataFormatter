@@ -1,41 +1,50 @@
 const gulp = require('gulp');
+const gutil = require('gutil');
 const babel = require('gulp-babel');
 const nodemon = require('gulp-nodemon');
 const runSequence = require('run-sequence');
 const rimraf = require('rimraf');
-const webpack = require('webpack-stream');
+const webpack = require('webpack');
 const webpackConfig = require('./webpack.config.js');
+
+const statsConfig = {
+  colors: true,
+  chunks: false,
+  modules: false,
+  hash: false,
+  version: false
+};
 
 gulp.task('dev', ()=>
   nodemon({
     script: './examples/lib',
     watch: ['./src', './examples/src'],
-    tasks: ['build:lib', 'build:examples']
+    tasks: ['build:dev', 'build:examples']
   })
 );
 
 
-gulp.task('clean:lib', (cb) =>
-  rimraf('./lib', cb)
+gulp.task('clean:dev', (cb) =>
+  rimraf('./dev', cb)
 );
 
 gulp.task('clean:examples', (cb) =>
   rimraf('./examples/lib', cb)
 );
 
-gulp.task('clean:dist', (cb) =>
-  rimraf('./dist', cb)
+gulp.task('clean:lib', (cb) =>
+  rimraf('./lib', cb)
 );
 
 gulp.task('clean', (cb)=>
-  runSequence(['clean:lib', 'clean:examples', 'clean:dist'], cb)
+  runSequence(['clean:dev', 'clean:examples', 'clean:lib'], cb)
 );
 
 
-gulp.task('build:lib', () =>
+gulp.task('build:dev', () =>
   gulp.src('./src/**/*.js')
     .pipe(babel())
-    .pipe(gulp.dest('./lib'))
+    .pipe(gulp.dest('./dev'))
 );
 
 gulp.task('build:examples', () =>
@@ -44,12 +53,14 @@ gulp.task('build:examples', () =>
     .pipe(gulp.dest('./examples/lib'))
 );
 
-gulp.task('build:dist', () =>
-  gulp.src('')
-    .pipe(webpack(webpackConfig))
-    .pipe(gulp.dest('dist'))
-);
+gulp.task('build:lib', function(cb) {
+  webpack(webpackConfig, function(err, stats) {
+    if(err) throw new gutil.PluginError('webpack:build', err);
+    gutil.log('[webpack:build]', stats.toString(statsConfig));
+    cb();
+  });
+});
 
 gulp.task('build', (cb)=>
-  runSequence(['build:lib', 'build:examples', 'build:dist'], cb)
+  runSequence(['build:dev', 'build:examples', 'build:lib'], cb)
 );

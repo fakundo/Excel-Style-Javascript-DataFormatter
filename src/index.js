@@ -1,8 +1,8 @@
 import { Code } from './utils';
+import defaultLocaleData from './locales/en-US';
+const defaultLocaleName = 'en-US';
 
-const defaultLocale = 'en-US';
-
-class DataFormatter {
+module.exports = class DataFormatter {
 
   /**
    * Constructor
@@ -16,8 +16,9 @@ class DataFormatter {
   constructor({
     debug = false,
     UTCOffset = null,
-    locale = defaultLocale,
-    transformCode = (code)=> code
+    locale = defaultLocaleName,
+    transformCode = (code)=> code,
+    locales = []
   } = {}) {
 
     this.memoized = {};
@@ -26,6 +27,11 @@ class DataFormatter {
     this.transformCode = transformCode;
     this.zeroDate = this.createDate('1899-12-31T00:00:00.000');
 
+    // Save defined locales
+    this.locales = { [defaultLocaleName]: defaultLocaleData };
+    this.defineLocales(locales);
+
+    // Set default locale
     this.setLocale(locale);
   }
 
@@ -37,16 +43,22 @@ class DataFormatter {
   }
 
   /**
+   * Defines locales
+   * @param  {array} locales
+   */
+  defineLocales(locales) {
+    locales.forEach((locale)=>
+      this.locales[locale.name] = locale
+    );
+  }
+
+  /**
    * Sets locale
    * If locale doesn't exist, sets default
    * @param {string} locale
    */
   setLocale(locale) {
-    let localeData = require('./locales/' + locale + '.js');
-    if (!localeData) {
-      localeData = require('./locales/' + defaultLocale + '.js');
-    }
-    this.locale = localeData.default;
+    this.locale = this.locales[locale] || this.locales[defaultLocaleName];
     this.clearMemoizedFunctions();
   }
 
@@ -970,22 +982,4 @@ class DataFormatter {
     return result;
   }
 
-}
-
-// Create instance
-const dataFormatter = new DataFormatter();
-
-// CommonJS
-module.exports = dataFormatter;
-module.exports.DataFormatter = DataFormatter;
-
-// AMD
-if (typeof global.define === 'function' && global.define.amd) {
-  global.define('dataFormatter', ()=> dataFormatter);
-  global.define('DataFormatter', ()=> DataFormatter);
-}
-// Window
-else {
-  global.dataFormatter = dataFormatter;
-  global.DataFormatter = DataFormatter;
 }

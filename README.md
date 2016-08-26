@@ -23,73 +23,82 @@ bower install excel-style-dataformatter
 ##CommonJS
 
 ```js
-import dataFormatter from 'excel-style-dataformatter';
+import DataFormatter from 'excel-style-dataformatter';
+const dataFormatter = new DataFormatter();
 const result = dataFormatter.format('99', 'Number', 'Currency');
 ```
 
-####Creating your own instance
+####With locales
 ```js
-import { DataFormatter } from 'excel-style-dataformatter';
-const options = { debug: true };
-const dataFormatter = new DataFormatter(options);
-const result = dataFormatter.format('123', 'Number', '[Red]0;[Green]0.0');
-```
+import DataFormatter from 'excel-style-dataformatter';
+import ru from 'excel-style-dataformatter/lib/ru';
 
-####Available options
-```
-debug {boolean}
-locale {string}
-transformCode {function}
-UTCOffset {number|null} - UTC offset for dates in minutes
+// Create instance with defined locales
+const options = { locales: [ru] };
+const dataFormatter = new DataFormatter(options);
+
+// Switch locale
+dataFormatter.setLocale('ru');
+
+const result = dataFormatter.format('99', 'Number', 'Currency');
 ```
 
 ##Browser
 
 ```html
-<!DOCTYPE html>
-<html>
-<head>
-  <script src="dist/excel-style-dataformatter.js"></script>
-</head>
-<body>
-  <script>
-    var result = dataFormatter.format('2013-05-22T13:19:59.000','DateTime','yyyy mm dd');
-    document.write(result.value);
+<script src="excel-style-dataformatter/lib/index.js"></script>
+<script src="excel-style-dataformatter/lib/locales/ru.js"></script>
+<script>
+  // Create instance
+  var dataFormatter = new window.DataFormatter({
+    locales: [window.DataFormatter_ru]
+  });
 
-    // Creating your own instance
-    var myDataFormatter = new DataFormatter({ debug: true });
-    var myResult = myDataFormatter.format('13.4', 'Number', 'General');
-    document.write(myResult.value);
-  </script>
-</body>
-</html>
+  // Default locale
+  document.write(dataFormatter.format('123.44', 'Number', 'Currency').value);
+
+  // Switch to russian
+  dataFormatter.setLocale('ru');
+  document.write(dataFormatter.format('123.44', 'Number', 'Currency').value);
+</script>
 ```
 
 ##AMD
 
 ```html
-<!DOCTYPE html>
-<html>
-<head>
-  <script src="require.js"></script>
-</head>
-<body>
-  <script>
-    require(['dist/excel-style-dataformatter.js'], function() {
+<script>
+  require(['excel-style-dataformatter/lib/index', 'excel-style-dataformatter/lib/locales/ru'], function() {
 
-      require(['dataFormatter', 'DataFormatter'], function(dataFormatter, DataFormatter) {
-
-        var result = dataFormatter.format('Test', 'String', '[>100][Red]0.0;[>10][Green]-0;[Blue]"Zero";@');
-        document.write(result.value);
-
-        // Creating your own instance
-        var myDataFormatter = new DataFormatter({ debug: true });
-        var myResult = myDataFormatter.format('0', 'Number', 'Yes/No');
-        document.write(myResult.value);
+    require(['DataFormatter', 'DataFormatter_ru'], function(DataFormatter, ru) {
+      // Create instance
+      var dataFormatter = new DataFormatter({ 
+        locales: [ru] 
       });
 
+      // Default locale
+      document.write(dataFormatter.format('99', 'Number', 'Currency').value);
+
+      // Switch to russian
+      dataFormatter.setLocale('ru');
+      document.write(dataFormatter.format('99', 'Number', 'Currency').value);
     });
-  </script>
-</body>
-</html>
+
+  });
+</script>
 ```
+
+#Available options
+```
+locale {string} - default locale
+locales {string} - defined locales
+UTCOffset {number|null} - UTC offset for dates in minutes
+transformCode {function}
+debug {boolean}
+```
+
+#API
+
+* `.format(value, type, format)`
+* `.defineLocales(locales)`
+* `.setLocale(locale)`
+* `.setUTCOffset(offset)`

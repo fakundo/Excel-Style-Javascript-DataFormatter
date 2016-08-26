@@ -4,9 +4,20 @@
   <meta charset='UTF-8'>
 </head>
 <body>
-  <script type='text/javascript' src='../../dist/excel-style-dataformatter.js'></script>
+  <script type='text/javascript' src='../../lib/index.js'></script>
+  <script type='text/javascript' src='../../lib/locales/ru.js'></script>
+
   <script>
+    var dataFormatter = new window.DataFormatter({
+      locales: [window.DataFormatter_ru]
+    });
+
     document.write(dataFormatter.format('123.44', 'Number', 'Currency').value);
+
+    dataFormatter.setLocale('ru');
+    document.write('</br>');
+    document.write(dataFormatter.format('123.44', 'Number', 'Currency').value);
+
   </script>
 </body>
 </html>

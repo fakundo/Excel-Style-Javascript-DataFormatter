@@ -1,5 +1,5 @@
 import beautify from 'js-beautify';
-import { DataFormatter } from '../../lib';
+import DataFormatter from '../../dev';
 
 let dataFormatter = new DataFormatter({
   debug: true,
