@@ -1,6 +1,6 @@
 {
   "name": "excel-style-dataformatter",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Excel-Style Javascript Data Formatter",
   "main": "lib/index.js",
   "scripts": {
