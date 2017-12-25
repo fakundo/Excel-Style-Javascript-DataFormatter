@@ -1,6 +1,6 @@
 {
   "name": "excel-style-dataformatter",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Excel-Style Javascript Data Formatter",
   "main": "lib/index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "dev": "gulp dev",
     "clean": "gulp clean",
     "build": "gulp build",
-    "prepublish": "npm run clean && npm run build && npm run test"
+    "prepublishOnly": "npm run clean && npm run build && npm run test"
   },
   "keywords": [
     "excel-like",

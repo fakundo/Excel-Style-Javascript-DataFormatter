@@ -1,14 +1,14 @@
-#Excel-Style Javascript Data Formatter
+# Excel-Style Javascript Data Formatter
 
 [![npm](https://img.shields.io/npm/v/excel-style-dataformatter.svg?maxAge=2592000)](https://www.npmjs.org/package/excel-style-dataformatter)
 
-##Current version supports
+## Current version supports
 - Number formatting (decimal form, fractional form, percents, etc.)
 - Date formatting (elapsed time, am/pm)
 - Predefined excel formats (Fixed, Standard, etc.)
 - Localization
 
-#Install
+# Install
 
 ```
 npm install excel-style-dataformatter
@@ -18,9 +18,9 @@ npm install excel-style-dataformatter
 bower install excel-style-dataformatter
 ```
 
-#Usage
+# Usage
 
-##CommonJS
+## CommonJS
 
 ```js
 import DataFormatter from 'excel-style-dataformatter';
@@ -28,7 +28,7 @@ const dataFormatter = new DataFormatter();
 const result = dataFormatter.format('99', 'Number', 'Currency');
 ```
 
-####With locales
+#### With locales
 ```js
 import DataFormatter from 'excel-style-dataformatter';
 import ru from 'excel-style-dataformatter/lib/ru';
@@ -43,7 +43,7 @@ dataFormatter.setLocale('ru');
 const result = dataFormatter.format('99', 'Number', 'Currency');
 ```
 
-##Browser
+## Browser
 
 ```html
 <script src="excel-style-dataformatter/lib/index.js"></script>
@@ -63,7 +63,7 @@ const result = dataFormatter.format('99', 'Number', 'Currency');
 </script>
 ```
 
-##AMD
+## AMD
 
 ```html
 <script>
@@ -87,7 +87,7 @@ const result = dataFormatter.format('99', 'Number', 'Currency');
 </script>
 ```
 
-#Available options
+# Available options
 ```
 locale {string} - default locale
 locales {string} - defined locales
@@ -96,7 +96,7 @@ transformCode {function}
 debug {boolean}
 ```
 
-#API
+# API
 
 * `.format(value, type, format)`
 * `.defineLocales(locales)`

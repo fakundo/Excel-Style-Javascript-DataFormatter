@@ -16,4 +16,4 @@ var dataFormatter = new _dev2.default({
   transformCode: _jsBeautify2.default
 });
 
-dataFormatter.format('2000', 'Number', '0.0E+0');
+dataFormatter.format('-200056641', 'Number', '#,###,;(#,###,)');

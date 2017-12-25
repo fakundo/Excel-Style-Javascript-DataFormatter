@@ -40,7 +40,8 @@ describe('Number', ()=> {
     assert.equal(df.format('123', 'Number', '0-0').value, '12-3');
     assert.equal(df.format('123000', 'Number', '0,0-0').value, '123 00-0');
     assert.equal(df.format('123000', 'Number', '0,0-0 ').value, '12-3');
-    assert.equal(df.format('-0', 'Number', '#').value, '0');
+    assert.equal(df.format('-0', 'Number', '#').value, '');
+    assert.equal(df.format('-200056641', 'Number', '#,###,;(#,###,)').value, '(200 057)');
   });
 
   it('Division spaces', ()=> {

@@ -33,22 +33,21 @@ module.exports = function () {
    *   transformCode {function} - code transformer
    * @param {object} options
    */
-
   function DataFormatter() {
-    var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-
-    var _ref$debug = _ref.debug;
-    var debug = _ref$debug === undefined ? false : _ref$debug;
-    var _ref$UTCOffset = _ref.UTCOffset;
-    var UTCOffset = _ref$UTCOffset === undefined ? null : _ref$UTCOffset;
-    var _ref$locale = _ref.locale;
-    var locale = _ref$locale === undefined ? defaultLocaleName : _ref$locale;
-    var _ref$transformCode = _ref.transformCode;
-    var transformCode = _ref$transformCode === undefined ? function (code) {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref$debug = _ref.debug,
+        debug = _ref$debug === undefined ? false : _ref$debug,
+        _ref$UTCOffset = _ref.UTCOffset,
+        UTCOffset = _ref$UTCOffset === undefined ? null : _ref$UTCOffset,
+        _ref$locale = _ref.locale,
+        locale = _ref$locale === undefined ? defaultLocaleName : _ref$locale,
+        _ref$transformCode = _ref.transformCode,
+        transformCode = _ref$transformCode === undefined ? function (code) {
       return code;
-    } : _ref$transformCode;
-    var _ref$locales = _ref.locales;
-    var locales = _ref$locales === undefined ? [] : _ref$locales;
+    } : _ref$transformCode,
+        _ref$locales = _ref.locales,
+        locales = _ref$locales === undefined ? [] : _ref$locales;
+
     (0, _classCallCheck3.default)(this, DataFormatter);
 
 
@@ -235,6 +234,8 @@ module.exports = function () {
         var _j = n.length - 1;
         var _i = pattern.length;
 
+        n = n === '0' ? '' : n;
+
         while (_i--) {
           switch (pattern[_i]) {
             case '0':
@@ -415,11 +416,11 @@ module.exports = function () {
     value: function formatAsDateTimeNormal(n, pattern) {
       var _this3 = this;
 
-      var _locale = this.locale;
-      var days = _locale.days;
-      var daysShort = _locale.daysShort;
-      var months = _locale.months;
-      var monthsShort = _locale.monthsShort;
+      var _locale = this.locale,
+          days = _locale.days,
+          daysShort = _locale.daysShort,
+          months = _locale.months,
+          monthsShort = _locale.monthsShort;
 
       var foundAMPM = false;
 
@@ -670,7 +671,7 @@ module.exports = function () {
         var factor = 1;
 
         // Spaces before end and decimal separator (.)
-        section = section.replace(/(0|#|\?)(\s+)([^0?#]*?)($|\.)/, function (a, m1, m2, m3, m4) {
+        section = section.replace(/(0|#|\?)([\s,]+)([^0?#]*?)($|\.)/, function (a, m1, m2, m3, m4) {
           factor *= Math.pow(1000, m2.length);
           return m1 + m3 + m4;
         });

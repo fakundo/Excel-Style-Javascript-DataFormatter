@@ -7,4 +7,4 @@ let dataFormatter = new DataFormatter({
   transformCode: beautify
 });
 
-dataFormatter.format('2000', 'Number', '0.0E+0');
+dataFormatter.format('-200056641', 'Number', '#,###,;(#,###,)');

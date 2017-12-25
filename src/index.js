@@ -177,6 +177,8 @@ module.exports = class DataFormatter {
       let j = n.length - 1;
       let i = pattern.length;
 
+      n = n === '0' ? '' : n
+
       while (i--) {
         switch (pattern[i]) {
           case '0':
@@ -651,7 +653,7 @@ module.exports = class DataFormatter {
       let factor = 1;
 
       // Spaces before end and decimal separator (.)
-      section = section.replace(/(0|#|\?)(\s+)([^0?#]*?)($|\.)/, (a, m1, m2, m3, m4)=> {
+      section = section.replace(/(0|#|\?)([\s,]+)([^0?#]*?)($|\.)/, (a, m1, m2, m3, m4)=> {
         factor *= Math.pow(1000, m2.length);
         return m1 + m3 + m4;
       });
